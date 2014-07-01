@@ -1,30 +1,23 @@
 package org.oregami.resources;
 
+import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
-
-import java.util.List;
-
-import javax.persistence.OptimisticLockException;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
+import net.engio.mbassy.bus.MBassador;
 import org.apache.log4j.Logger;
 import org.oregami.entities.Task;
 import org.oregami.entities.TaskDao;
+import org.oregami.messages.NewTask;
+import org.oregami.messages.ToDoMessage;
 import org.oregami.service.ServiceResult;
 import org.oregami.service.TaskService;
 import org.oregami.user.User;
 
-import com.google.inject.Inject;
+import javax.persistence.OptimisticLockException;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import java.util.List;
 
 
 @Path("/task")
@@ -37,6 +30,9 @@ public class TaskResource {
 	
 	@Inject
 	private TaskService taskService;
+
+    @Inject
+    private MBassador<ToDoMessage> eventBus;
 	
 	public TaskResource() {
 	}
@@ -80,6 +76,8 @@ public class TaskResource {
 						.type("text/json")
 		                .entity(serviceResult.getErrors()).build();
 			}
+
+            eventBus.post( new NewTask(t));
 			return Response.ok().build();
 		} catch (Exception e) {
 			return Response.status(Status.CONFLICT).type("text/plain")
