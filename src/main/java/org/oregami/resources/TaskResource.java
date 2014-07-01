@@ -1,13 +1,12 @@
 package org.oregami.resources;
 
+import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import io.dropwizard.auth.Auth;
-import net.engio.mbassy.bus.MBassador;
 import org.apache.log4j.Logger;
 import org.oregami.entities.Task;
 import org.oregami.entities.TaskDao;
 import org.oregami.messages.NewTask;
-import org.oregami.messages.ToDoMessage;
 import org.oregami.service.ServiceResult;
 import org.oregami.service.TaskService;
 import org.oregami.user.User;
@@ -32,7 +31,7 @@ public class TaskResource {
 	private TaskService taskService;
 
     @Inject
-    private MBassador<ToDoMessage> eventBus;
+    private EventBus eventBus;
 	
 	public TaskResource() {
 	}
