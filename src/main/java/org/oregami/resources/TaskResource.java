@@ -77,7 +77,7 @@ public class TaskResource {
 		                .entity(serviceResult.getErrors()).build();
 			}
 
-            eventBus.post( new NewTask(t));
+            eventBus.publishAsync( new NewTask(t));
 			return Response.ok().build();
 		} catch (Exception e) {
 			return Response.status(Status.CONFLICT).type("text/plain")

@@ -5,11 +5,12 @@ import net.engio.mbassy.bus.MBassador;
 import net.engio.mbassy.listener.Handler;
 import org.apache.log4j.Logger;
 import org.oregami.messages.NewTask;
+import org.oregami.messages.ToDoMessage;
 
 public class NewTaskListener {
 
     @Inject
-    public NewTaskListener(MBassador<NewTask> eventBus) {
+    public NewTaskListener(MBassador<ToDoMessage> eventBus) {
         eventBus.subscribe(this);
     }
 

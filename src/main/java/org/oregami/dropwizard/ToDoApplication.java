@@ -1,24 +1,22 @@
 package org.oregami.dropwizard;
 
-import io.dropwizard.Application;
-import io.dropwizard.auth.basic.BasicAuthProvider;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
-
-import java.util.EnumSet;
-
-import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration.Dynamic;
-
-import org.eclipse.jetty.servlets.CrossOriginFilter;
-import org.oregami.data.DatabaseFiller;
-import org.oregami.resources.TaskResource;
-import org.oregami.user.User;
-
 import com.google.inject.persist.PersistFilter;
 import com.google.inject.persist.PersistService;
 import com.google.inject.persist.jpa.JpaPersistModule;
 import com.hubspot.dropwizard.guice.GuiceBundle;
+import io.dropwizard.Application;
+import io.dropwizard.auth.basic.BasicAuthProvider;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
+import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.oregami.data.DatabaseFiller;
+import org.oregami.listeners.NewTaskListener;
+import org.oregami.resources.TaskResource;
+import org.oregami.user.User;
+
+import javax.servlet.DispatcherType;
+import javax.servlet.FilterRegistration.Dynamic;
+import java.util.EnumSet;
 
 public class ToDoApplication extends Application<ToDoConfiguration> {
 
@@ -71,6 +69,8 @@ public class ToDoApplication extends Application<ToDoConfiguration> {
 	    environment.servlets().addFilter("persistFilter", guiceBundle.getInjector().getInstance(PersistFilter.class)).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
 	    
 		environment.jersey().register(guiceBundle.getInjector().getInstance(TaskResource.class));
+
+        environment.jersey().register(guiceBundle.getInjector().getInstance(NewTaskListener.class));
 		
 		environment.jersey().register(new BasicAuthProvider<User>(new ToDoBasicAuthenticator(),
                 "only visible with valid user/password"));
